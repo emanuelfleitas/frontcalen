@@ -2,7 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import axios from "axios"
-import firebase from "firebase/app";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-app.js";
+import { getDatabase} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-database.js"  
+import { getAuth} from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js"  
 
 Vue.config.productionTip = false
 
@@ -16,7 +18,11 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID,
 };
 
-Vue.prototype.$firebase_coreapp = firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app)
+const auth = getAuth()
+
+Vue.prototype.$firebase_coreapp = app
 
 if (process.env.USE_FUNCTIONS_EMULATORS === "true") {
   const host = process.env.FUNCTIONS_EMULATOR_HOST;
@@ -24,8 +30,8 @@ if (process.env.USE_FUNCTIONS_EMULATORS === "true") {
   firebase.functions().useEmulator(host, port);
 }
 
-firebase.auth().languageCode = "es";
-Vue.prototype.$firebase = firebase;
+auth.languageCode = "es";
+Vue.prototype.$firebase = app;
 
 new Vue({
   router,
